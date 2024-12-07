@@ -7,7 +7,7 @@ my_dict = {
 print(my_dict['tuple'][-1])
 my_dict['list'].append(19)
 my_dict['list'].pop(1)
-my_dict['dict']['i am a tuple'] = 'it is not a typo'
+my_dict['dict'][('i am a tuple', )] = 'it is not a typo'
 my_dict['dict'].pop(3)
 my_dict['set'].add('some text value')
 my_dict['set'].remove(11)
