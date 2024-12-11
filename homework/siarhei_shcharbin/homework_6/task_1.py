@@ -1,5 +1,5 @@
 input_phrase = ('Etiam tincidunt neque erat, quis molestie enim imperdiet vel. '
-          'Integer urna nisl, facilisis vitae semper at, dignissim vitae libero')
+                'Integer urna nisl, facilisis vitae semper at, dignissim vitae libero')
 output_phrase = []
 for word in input_phrase.split(' '):
     if word[-1] == ',':
