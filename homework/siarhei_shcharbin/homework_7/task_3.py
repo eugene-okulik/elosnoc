@@ -12,4 +12,3 @@ def sum_10(result):
 
 a = input()
 sum_10(a)
-
