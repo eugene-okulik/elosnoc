@@ -46,9 +46,9 @@ book_1 = SchoolBook(
 )
 book_2 = SchoolBook(
     'World History', 'Koshelev V. S.', 134, '555-1-3988-0779-2', False, 'History', 7, False
-                    )
+)
 book_3 = SchoolBook(
     'English', 'Naumova E. G.', 126, '555-5-17-119245-7', True, 'English', 10, True
-                    )
+)
 print(book_1.book_details())
 print(book_2.book_details())
