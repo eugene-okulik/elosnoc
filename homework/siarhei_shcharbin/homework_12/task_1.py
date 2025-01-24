@@ -68,7 +68,7 @@ class Bouquet:
         else:
             self.flowers = flowers
             flowers_name = [flower.name for flower in self.flowers]
-            print(f'{','.join(flowers_name)} have been added to the bouquet')
+            print(f"{','.join(flowers_name)} have been added to the bouquet")
 
     def add_flowers(self, flower):
         self.flowers.append(flower)
