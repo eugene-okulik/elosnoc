@@ -101,7 +101,7 @@ from students s JOIN books b on s.id = b.taken_by_student_id
 JOIN `groups` g on s.group_id = g.id
 JOIN marks m on s.id = m.student_id
 JOIN lessons l on  m.lesson_id = l.id
-JOIN subjets sub on l.subject_id = sub.id WHERE s.id = 4557''')
+JOIN subjets sub on l.subject_id = sub.id WHERE s.id = {student_id}''')
 everything = cursor.fetchall()
 print(f"All information related to the student is: {everything}")
 
