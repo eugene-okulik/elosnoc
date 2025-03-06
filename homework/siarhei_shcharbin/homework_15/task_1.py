@@ -50,34 +50,18 @@ subject2_id = cursor.lastrowid
 cursor.execute(f"INSERT INTO subjets (title) VALUES ('{subject3}')")
 subject3_id = cursor.lastrowid
 print(f"Subjects ids are: {subject1_id}, {subject2_id}, {subject3_id}")
-insert_lessons_query = "INSERT INTO lessons (title, subject_id) VALUES (%s, %s)"
-cursor.executemany(
-    insert_lessons_query, [
-        (subject1, subject1_id),
-        (subject1, subject1_id),
-        (subject2, subject2_id),
-        (subject2, subject2_id),
-        (subject3, subject3_id),
-        (subject3, subject3_id)
-    ]
-)
-cursor.execute(f"SELECT id from lessons WHERE subject_id = '{subject1_id}'")
-data1 = cursor.fetchall()
-cursor.execute(f"SELECT id from lessons WHERE subject_id = '{subject2_id}'")
-data2 = cursor.fetchall()
-cursor.execute(f"SELECT id from lessons WHERE subject_id = '{subject3_id}'")
-data3 = cursor.fetchall()
-
-
-def get_lessons_ids(data_ids):
-    lesson_ids = [lesson['id'] for lesson in data_ids]
-    id1, id2 = lesson_ids[0], lesson_ids[1]
-    return id1, id2
-
-
-lesson1_id, lesson2_id = get_lessons_ids(data1)
-lesson3_id, lesson4_id = get_lessons_ids(data2)
-lesson5_id, lesson6_id = get_lessons_ids(data3)
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject1}', '{subject1_id}')")
+lesson1_id = cursor.lastrowid
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject1}', '{subject1_id}')")
+lesson2_id = cursor.lastrowid
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject2}', '{subject2_id}')")
+lesson3_id = cursor.lastrowid
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject2}', '{subject2_id}')")
+lesson4_id = cursor.lastrowid
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject3}', '{subject3_id}')")
+lesson5_id = cursor.lastrowid
+cursor.execute(f"INSERT INTO lessons (title, subject_id) VALUES ('{subject3}', '{subject3_id}')")
+lesson6_id = cursor.lastrowid
 print(f"Lessons ids are: {lesson1_id}, {lesson2_id}, {lesson3_id}, {lesson4_id}, {lesson5_id}, {lesson6_id}")
 insert_marks_query = "INSERT INTO marks (value, lesson_id, student_id) VALUES (%s, %s, %s)"
 cursor.executemany(
