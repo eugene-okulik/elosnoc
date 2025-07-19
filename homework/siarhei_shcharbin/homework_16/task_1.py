@@ -2,7 +2,6 @@ import pymysql
 import os
 import dotenv
 
-
 dotenv.load_dotenv()
 db = pymysql.connect(
     user=os.getenv('DB_USER'),
