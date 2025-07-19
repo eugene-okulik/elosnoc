@@ -11,7 +11,7 @@ db = pymysql.connect(
     database=os.getenv('DB_NAME')
 )
 cursor = pymysql.cursors.DictCursor(db)
-cursor.execute(f'''SELECT s.name, s.second_name, g.title, b.title, sub.title, l.title, m.value  
+cursor.execute('''SELECT s.name, s.second_name, g.title, b.title, sub.title, l.title, m.value
 from students s JOIN books b on s.id = b.taken_by_student_id
 JOIN `groups` g on s.group_id = g.id
 JOIN marks m on s.id = m.student_id
