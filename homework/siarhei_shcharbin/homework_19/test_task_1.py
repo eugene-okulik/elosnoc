@@ -79,13 +79,6 @@ def test_get_all_records(start_complete, before_after):
 
 
 def test_get_record(new_record_id):
-    body = {
-        "name": 'some_name',
-        "data": {
-            "color": "orange",
-            "size": "medium"
-        }
-    }
     record_id = new_record_id
     response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}').json()
     assert response['id'] == record_id, 'Id of the record does not match'
