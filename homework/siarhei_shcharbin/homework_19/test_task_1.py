@@ -78,7 +78,7 @@ def test_get_all_records(start_complete, before_after):
     assert response.status_code == 200, 'Something went wrong: Incorrect status code'
 
 
-def test_get_record(record_manager):
+def test_get_record(new_record_id):
     body = {
         "name": 'some_name',
         "data": {
@@ -86,13 +86,13 @@ def test_get_record(record_manager):
             "size": "medium"
         }
     }
-    record_id = record_manager(body)
+    record_id = new_record_id
     response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}').json()
     assert response['id'] == record_id, 'Id of the record does not match'
 
 
 @pytest.mark.parametrize('object_name', ['test_object', 'second_object', 'last_object'])
-def test_create_record(object_name, record_manager):
+def test_create_record(object_name):
     body = {
         "name": object_name,
         "data": {
@@ -100,19 +100,21 @@ def test_create_record(object_name, record_manager):
             "size": "medium"
         }
     }
-    print(f'Object name: {object_name}')
-    print(f'Request body: {body}')
-    record_id = record_manager(body)
-    print(f'Created record with id {record_id}')
-    response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}')
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post('http://objapi.course.qa-practice.com/object', json=body, headers=headers)
+    record_id = response.json()['id']
     assert response.status_code == 200, 'Something went wrong: Incorrect status code'
     assert response.json()['data']['color'] == 'orange', 'Incorrect object color'
     assert response.json()['name'] == object_name, 'Incorrect object name'
     assert response.json()['data']['size'] == 'medium', 'Incorrect object size'
+    delete_response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
+    print('Deleting a record')
+    assert delete_response.status_code == 200, \
+        f'Something went wrong while deleting a record, status code: {delete_response.status_code}'
 
 
 @pytest.mark.critical
-def test_update_put_record(record_manager):
+def test_update_put_record(new_record_id):
     body = {
         "name": "updated_put_object",
         "data": {
@@ -121,7 +123,7 @@ def test_update_put_record(record_manager):
         }
     }
     headers = {'Content-Type': 'application/json'}
-    record_id = record_manager(body)
+    record_id = new_record_id
     response = requests.put(
         f'http://objapi.course.qa-practice.com/object/{record_id}', json=body, headers=headers
     )
@@ -149,15 +151,8 @@ def test_update_patch_record(new_record_id):
 
 
 @pytest.mark.medium
-def test_delete_record(record_manager):
-    body = {
-        "name": 'some_name',
-        "data": {
-            "color": "orange",
-            "size": "medium"
-        }
-    }
-    record_id = record_manager(body)
+def test_delete_record(new_record_id):
+    record_id = new_record_id
     response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
     assert response.status_code == 200, 'Something went wrong: Incorrect status code'
     response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}')
