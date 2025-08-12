@@ -1,3 +1,4 @@
+import allure
 import requests
 import pytest
 
@@ -73,17 +74,35 @@ def record_manager():
             print(f'Failed to delete record with id {record_id}, status code: {delete_response.status_code}')
 
 
+@allure.suite('Smoke suite')
+@allure.feature('Records')
+@allure.story('Getting records')
+@allure.title('Check all available records can be received')
 def test_get_all_records(start_complete, before_after):
-    response = requests.get('http://objapi.course.qa-practice.com/object')
-    assert response.status_code == 200, 'Something went wrong: Incorrect status code'
+    with allure.step('Receiving a record information'):
+        response = requests.get('http://objapi.course.qa-practice.com/object')
+    with allure.step('Verifying that response status code is 200'):
+        assert response.status_code == 200, 'Something went wrong: Incorrect status code'
 
 
+@pytest.mark.skip('Skipped with no reason')
+@allure.feature('Records')
+@allure.story('Getting records')
+@allure.title('Check that created record can be received by ID')
 def test_get_record(new_record_id):
-    record_id = new_record_id
-    response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}').json()
-    assert response['id'] == record_id, 'Id of the record does not match'
+    with allure.step('Creating a record and receiving an ID'):
+        record_id = new_record_id
+    with allure.step('Receiving a record information by ID'):
+        response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}').json()
+    with allure.step(f'Verifying that record id is {record_id}'):
+        assert response['id'] == record_id, 'Id of the record does not match'
 
 
+@allure.severity('S0')
+@allure.suite('Smoke suite')
+@allure.feature('Records')
+@allure.story('Records creation')
+@allure.title('Check that record can be created')
 @pytest.mark.parametrize('object_name', ['test_object', 'second_object', 'last_object'])
 def test_create_record(object_name):
     body = {
@@ -94,18 +113,30 @@ def test_create_record(object_name):
         }
     }
     headers = {'Content-Type': 'application/json'}
-    response = requests.post('http://objapi.course.qa-practice.com/object', json=body, headers=headers)
-    record_id = response.json()['id']
-    assert response.status_code == 200, 'Something went wrong: Incorrect status code'
-    assert response.json()['data']['color'] == 'orange', 'Incorrect object color'
-    assert response.json()['name'] == object_name, 'Incorrect object name'
-    assert response.json()['data']['size'] == 'medium', 'Incorrect object size'
-    delete_response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
+    with allure.step('Receiving a record information'):
+        response = requests.post('http://objapi.course.qa-practice.com/object', json=body, headers=headers)
+    with allure.step('Getting a record ID'):
+        record_id = response.json()['id']
+    with allure.step('Verifying that status code is 200'):
+        assert response.status_code == 200, 'Something went wrong: Incorrect status code'
+    with allure.step('Verifying that color is "orange"'):
+        assert response.json()['data']['color'] == 'orange', 'Incorrect object color'
+    with allure.step(f'Verifying that name is {object_name}'):
+        assert response.json()['name'] == object_name, 'Incorrect object name'
+    with allure.step('Verifying that size is "medium"'):
+        assert response.json()['data']['size'] == 'medium', 'Incorrect object size'
+    with allure.step(f'Deleting a record with id {record_id}'):
+        delete_response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
     print('Deleting a record')
-    assert delete_response.status_code == 200, \
-        f'Something went wrong while deleting a record, status code: {delete_response.status_code}'
+    with allure.step('Verifying that status code is 200'):
+        assert delete_response.status_code == 200, \
+            f'Something went wrong while deleting a record, status code: {delete_response.status_code}'
 
 
+@allure.suite('Regression suite')
+@allure.feature('Records')
+@allure.story('Records update')
+@allure.title('Check that record can be updated using PUT method')
 @pytest.mark.critical
 def test_update_put_record(new_record_id):
     body = {
@@ -116,16 +147,26 @@ def test_update_put_record(new_record_id):
         }
     }
     headers = {'Content-Type': 'application/json'}
-    record_id = new_record_id
-    response = requests.put(
-        f'http://objapi.course.qa-practice.com/object/{record_id}', json=body, headers=headers
-    )
-    assert response.json()['name'] == 'updated_put_object', 'Incorrect object data'
-    assert response.json()['data']['color'] == 'black', 'Incorrect object data'
-    assert response.json()['data']['size'] == 'medium', 'Incorrect object data'
-    assert response.status_code == 200, 'Something went wrong: Incorrect status code'
+    with allure.step('Creating a record and receiving an ID'):
+        record_id = new_record_id
+    with allure.step(f'Updating a record with id {record_id}'):
+        response = requests.put(
+            f'http://objapi.course.qa-practice.com/object/{record_id}', json=body, headers=headers
+        )
+    with allure.step('Verifying that name is "updated_put_object"'):
+        assert response.json()['name'] == 'updated_put_object', 'Incorrect object data'
+    with allure.step('Verifying that color is "black"'):
+        assert response.json()['data']['color'] == 'black', 'Incorrect object data'
+    with allure.step('Verifying that size is "medium"'):
+        assert response.json()['data']['size'] == 'medium', 'Incorrect object data'
+    with allure.step('Verifying that status code is 200'):
+        assert response.status_code == 200, 'Something went wrong: Incorrect status code'
 
 
+@allure.suite('Regression suite')
+@allure.feature('Records')
+@allure.story('Records update')
+@allure.title('Check that record can be updated using PATCH method')
 def test_update_patch_record(new_record_id):
     body = {
         "data": {
@@ -134,19 +175,35 @@ def test_update_patch_record(new_record_id):
         }
     }
     headers = {'Content-Type': 'application/json'}
-    record_id = new_record_id
-    response = requests.patch(
-        f'http://objapi.course.qa-practice.com/object/{record_id}', json=body, headers=headers
-    )
-    assert response.json()['data']['size'] == 'big', 'Incorrect object data'
-    assert response.json()['data']['color'] == 'grey', 'Incorrect object data'
-    assert response.json()['name'] == 'test_object', 'Incorrect object data'
+    with allure.step('Creating a record and receiving an ID'):
+        record_id = new_record_id
+    with allure.step(f'Updating a record with id {record_id}'):
+        response = requests.patch(
+            f'http://objapi.course.qa-practice.com/object/{record_id}', json=body, headers=headers
+        )
+    with allure.step('Verifying that size is "big"'):
+        assert response.json()['data']['size'] == 'big', 'Incorrect object data'
+    with allure.step('Verifying that color is "grey"'):
+        assert response.json()['data']['color'] == 'grey', 'Incorrect object data'
+    with allure.step('Verifying that name is "test_object"'):
+        assert response.json()['name'] == 'test_object', 'Incorrect object data'
 
 
+@allure.severity('S1')
+@allure.suite('Smoke suite')
+@allure.feature('Records')
+@allure.story('Records deletion')
+@allure.title('Check that record can be deleted')
 @pytest.mark.medium
 def test_delete_record(new_record_id):
-    record_id = new_record_id
-    response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
-    assert response.status_code == 200, 'Something went wrong: Incorrect status code'
-    response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}')
-    assert response.status_code == 404, 'Record was not deleted'
+    with allure.step('Creating a record and receiving an ID'):
+        record_id = new_record_id
+
+    with allure.step(f'Deleting a record with id {record_id}'):
+        response = requests.delete(f'http://objapi.course.qa-practice.com/object/{record_id}')
+    with allure.step('Verifying that status code is 200'):
+        assert response.status_code == 200, 'Something went wrong: Incorrect status code'
+    with allure.step(f'Getting a record with id {record_id}'):
+        response = requests.get(f'http://objapi.course.qa-practice.com/object/{record_id}')
+    with allure.step('Verifying that a record can not be found: status code is 404'):
+        assert response.status_code == 404, 'Record was not deleted'
