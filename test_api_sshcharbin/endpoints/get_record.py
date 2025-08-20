@@ -15,7 +15,7 @@ class GetRecord(BaseEndpoint):
             self.json = self.response.json()
         return self.response
 
-    @allure.step(f'Retrieving a record')
+    @allure.step('Retrieving a record')
     def get_record_by_id(self, record_id):
         record_id = record_id if record_id else self.record_id
         self.response = requests.get(
